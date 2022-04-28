@@ -9,68 +9,46 @@ import { useNavigate } from "react-router-dom";
 function CreateGame() {
     const { addGame, selectGame, setSelectGame } = useContext(GameContext);
     const navigate = useNavigate();
-    const [title, setTitle] = useState('');
-    const [price, setPrice] = useState(null);
-    const [description, setDescription] = useState('');
-    
+    const [title, setTitle] = useState(selectGame.title);
+    const [price, setPrice] = useState(selectGame.price);
+  const [description, setDescription] = useState(selectGame.description);
+
+  console.log("select game: "+selectGame);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         e.stopPropagation();
         try {
-            
-        const response = await GameAPI.post("/games", {
+          const game = {
             title,
             price,
             description,
-        });
-        
-        console.log(response.data.data);
-        if (selectGame) {
+            // review,
+          };
+          
+       if (selectGame) {
+            
+            const response = await GameAPI.put(`/games/${selectGame._id}`, game);
+            const res = response.data;
+            console.log("Edit the game:" + res);
             setSelectGame({})
+            console.log("navigating to..");
+            navigate(`/games/${res._id}`);
         }
-        else {
-            addGame(response.data.data.game);
-        }
-       navigate('/games');
+       else {
+           const response = await GameAPI.post(`/games`, game);
+            const res = response.data.game;
+            console.log("Submit a new game" + res);
+            addGame(res);
+            console.log("navigating to..");
+            navigate(`/games/${res._id}`);
+          }
+      
     } catch (err) {
         console.log(err);
         }
     };
     
-    // return (
-    //     <form>
-    //         <label>Title:
-    //             <input
-    //             type="text" 
-    //             value={title}
-    //             onChange={(e) => setTitle(e.target.value)}
-    //             />
-    //         </label>
-    //             <label>Price:
-    //             <input
-    //             type="number" 
-    //             value={price}
-    //             onChange={(e) => setPrice(e.target.value)}
-    //             />
-    //         </label>
-    //             <label>Description:
-    //             <input
-    //             type="text" 
-    //             value={description}
-    //             onChange={(e) => setDescription(e.target.value)}
-    //             />
-    //         </label>
-    //         <Button
-    //             onClick={handleSubmit}
-    //             type="submit"
-    //             variant="secondary"
-    //             size="sm">
-                
-    //         Add
-    //         </Button>
-    //     </form>
-        
-    // )
     return (
       <Form
         style={{ width: "40rem", margin: "0 auto" }}
@@ -104,14 +82,27 @@ function CreateGame() {
             title="Game Price"
             value={price}
             onChange={(e) => setPrice(e.target.value)}
-          />
+          />{" "}
+          <InputGroup.Text>$</InputGroup.Text>
+          <InputGroup.Text>0.00</InputGroup.Text>
         </InputGroup>
 
         <Form.Group className="mb-3">
           <InputGroup.Text>Descipton</InputGroup.Text>
-          <FormControl as="textarea" aria-label="With textarea" />
+          <FormControl
+            as="textarea"
+            defaultValue={selectGame.description}
+            id="description"
+            placeholder="Description"
+            title="Game Description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
         </Form.Group>
-            <Button variant="primary" onClick={handleSubmit}>
+
+     
+
+        <Button variant="primary" className="mt-2" onClick={handleSubmit}>
           Submit
         </Button>
       </Form>

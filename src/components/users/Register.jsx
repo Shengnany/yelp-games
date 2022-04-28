@@ -9,6 +9,7 @@ function Register() {
       const [pw, setPw] = useState("");
         const navigate = useNavigate();
   const { curUser, setCurser } = useContext(GameContext);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -18,8 +19,6 @@ function Register() {
     };
     try {
       const response = await GameAPI.post("/users", user);
-
-      console.log(response.data.data);
       if (!curUser) {
         setCurser(user);
       }
@@ -28,6 +27,7 @@ function Register() {
       console.log(err);
     }
   };
+
   return (
     <div>
       <Card
@@ -39,7 +39,7 @@ function Register() {
       >
         <Card.Body>
           <Card.Title>Register</Card.Title>
-          <Card.Text>Please log in with your email</Card.Text>
+          <Card.Text>Please create an account with your email</Card.Text>
           <Form>
             <Form.Group className="mb-3" controlId="formGroupEmail">
               <Form.Label>Username</Form.Label>

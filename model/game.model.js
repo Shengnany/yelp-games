@@ -9,6 +9,12 @@ const GameSchema = new Schema({
     title: String,
     price: Number,
     description: String,
+    reviews: [
+    {
+        type: Schema.Types.ObjectId,
+        ref: 'Review'
+    }
+    ]
     // author: {
     //     type: Schema.Types.ObjectId,
     //     ref: 'User'

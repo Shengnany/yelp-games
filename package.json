@@ -13,12 +13,17 @@
     "cors": "^2.8.5",
     "express": "^4.17.3",
     "jsonwebtoken": "^8.5.1",
+    "lorem-ipsum": "^2.0.4",
     "mongoose": "^6.3.1",
+    "morgan": "^1.10.0",
     "react": "^18.0.0",
     "react-bootstrap": "^2.3.0",
+    "react-bootstrap-star-rating": "^3.5.5-alpha.0.3",
     "react-dom": "^18.0.0",
     "react-router-dom": "^6.3.0",
     "react-scripts": "5.0.1",
+    "react-simple-star-rating": "^4.0.5",
+    "react-star-rating": "^1.4.2",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

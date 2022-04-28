@@ -3,11 +3,11 @@ const path = require('path');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
-
+const morgan = require('morgan');
 const gameRouter = require('./routes/games');
+const reviewRouter = require('./routes/reviews');
 
-
-const mongooseEnpoint = process.env.DB_URL || 'mongodb://localhost:27017/yelp-camp';
+const mongooseEnpoint = process.env.DB_URL || 'mongodb://localhost:27017/yelpgames_app';
 
 mongoose.connect(mongooseEnpoint, {     
   // useNewUrlParser: true,
@@ -32,18 +32,20 @@ app.use(cookieParser());
 app.use(cors({
     origin: '*',
 }));
-
+app.use(morgan('tiny'))
 // app.use(methodOverride('_method'));
 // app.use(express.static(path.join(__dirname, 'public')))
-app.use(express.static(path.join(__dirname, 'build')));
+// app.use(express.static(path.join(__dirname, 'build')));
 // app.use(mongoSanitize({
 //     replaceWith: '_'
 // }))
 
 
 // app.use(auth_middleware);
+
 app.use('/games', gameRouter);
-// app.use('/games/:id/reviews', reviewRouter);
+app.use('/games/:id/reviews', reviewRouter);
+
 // app.use('/', userRouter);
 
 app.get('*', function (req, res) {

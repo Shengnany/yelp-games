@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-
+const catchAsync = require('../utils/catchAsync');
 // module.exports = function(request, response, next) {
 //     const token = request.cookies.token;  
 //     if (!token) {
@@ -18,14 +18,48 @@ const jwt = require('jsonwebtoken');
 
 
 module.exports.isLoggedIn = (req, res, next) => {
-    next();
+    if (false) {
+        const msg = error.details.map(el => el.message).join(',')
+        throw new ExpressError(msg, 400)
+    } else {
+        next();
+    }
 }
 
 module.exports.validateGame = (req, res, next) => {
-    next();
+   if (false) {
+        const msg = error.details.map(el => el.message).join(',')
+        throw new ExpressError(msg, 400)
+    } else {
+        next();
+    }
 }
 
-module.exports.isAuthor = async (req, res, next) => {
-    next();
+module.exports.isAuthor =  (req, res, next) => {
+  if (false) {
+        const msg = error.details.map(el => el.message).join(',')
+        throw new ExpressError(msg, 400)
+    } else {
+        next();
+    }
+}
+
+
+module.exports.isReviewAuthor =  (req, res, next) => {
+ if (false) {
+        const msg = error.details.map(el => el.message).join(',')
+        throw new ExpressError(msg, 400)
+    } else {
+        next();
+    }
+}
+
+module.exports.validateReview =  (req, res, next) => {
+   if (false) {
+        const msg = error.details.map(el => el.message).join(',')
+        throw new ExpressError(msg, 400)
+    } else {
+        next();
+    }
 }
 

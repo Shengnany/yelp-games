@@ -90,6 +90,8 @@ delete /games/:id
 /users/authenticate
 /users
 
+post /games/:id/reviews
+
 frontend routes:
 /games <GameList />
 /games/:id: <GameDetail />
@@ -100,4 +102,5 @@ frontend routes:
 
 Footer
 Allow image
-Form 
+Form validation https://react-bootstrap.netlify.app/forms/validation/
+each time allow a popup
