@@ -14,29 +14,34 @@ const GameSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Review'
     }
-    ]
-    // author: {
-    //     type: Schema.Types.ObjectId,
-    //     ref: 'User'
-    // },
-    // reviews: [
-    //     {
-    //         type: Schema.Types.ObjectId,
-    //         ref: 'Review'
-    //     }
-    // ]
+    ],
+    author: {
+        // type: Schema.Types.ObjectId,
+        // ref: 'User'
+        type:String
+    }
 }, opts);
 
 
 
-// GameSchema.post('findOneAndDelete', async function (doc) {
-//     if (doc) {
-//         await Review.deleteMany({
-//             _id: {
-//                 $in: doc.reviews
-//             }
-//         })
-//     }
-// });
+GameSchema.post('findOneAndDelete', async function (doc) {
+    if (doc) {
+        await Review.deleteMany({
+            _id: {
+                $in: doc.reviews
+            }
+        })
+    }
+});
+
+GameSchema.post('deleteMany', async function (doc) {
+    if (doc) {
+        await Review.deleteMany({
+            _id: {
+                $in: doc.reviews
+            }
+        })
+    }
+});
 
 module.exports = mongoose.model('Game', GameSchema);

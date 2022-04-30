@@ -10,14 +10,21 @@ module.exports.index = async (req, res) => {
 
 
 module.exports.createGame = async (req, res, next) => {
-    const game = new Game(req.body.game);
+    console.log("In create game");
+    console.log(req.body);
+    const game = new Game(req.body);
+    console.log(req);
+    // console.log(game);
+    // console.log(game.author);
+    // console.log(req.user._id);
     // game.author = req.user._id;
-    console.log("In post" + game);
+    game.author = "admin";
     await game.save();
     return res.status(201).send(game);
 }
 
 module.exports.showGame = async (req, res,) => {
+     console.log("In show game" );
     // const game = await Game.findById(req.params.id).populate({
     //     path: 'reviews',
     //     populate: {

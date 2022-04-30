@@ -1,23 +1,11 @@
 const jwt = require('jsonwebtoken');
-const catchAsync = require('../utils/catchAsync');
-// module.exports = function(request, response, next) {
-//     const token = request.cookies.token;  
-//     if (!token) {
-//         response.status(401).send('Unauthorized: No token provided');
-//     } else {
-//         jwt.verify(token, "SUPER_SECRET", function(err, decoded) {
-//             if (err) {
-//                 response.status(401).send('Unauthorized: Invalid token');
-//             } else {
-//                 request.username = decoded.username;
-//                 next();
-//             }
-//         });
-//     }
-// }
+const express = require('express');
+const passport = require('passport');
+const User = require('../model/user.model');
 
 
-module.exports.isLoggedIn = (req, res, next) => {
+
+module.exports.validateGame = (req, res, next) => {
     if (false) {
         const msg = error.details.map(el => el.message).join(',')
         throw new ExpressError(msg, 400)
@@ -26,32 +14,35 @@ module.exports.isLoggedIn = (req, res, next) => {
     }
 }
 
-module.exports.validateGame = (req, res, next) => {
-   if (false) {
-        const msg = error.details.map(el => el.message).join(',')
-        throw new ExpressError(msg, 400)
-    } else {
-        next();
-    }
-}
-
-module.exports.isAuthor =  (req, res, next) => {
-  if (false) {
-        const msg = error.details.map(el => el.message).join(',')
-        throw new ExpressError(msg, 400)
-    } else {
-        next();
-    }
+module.exports.isLoggedIn = (req, res, next) => {
+    // console.log(req.isAuthenticated())
+	// if (req.isAuthenticated()) return next();
+    // res.status(404).send({
+    //     message: false
+    // })
+    next();
 }
 
 
-module.exports.isReviewAuthor =  (req, res, next) => {
- if (false) {
-        const msg = error.details.map(el => el.message).join(',')
-        throw new ExpressError(msg, 400)
-    } else {
-        next();
+module.exports.isAuthor = async (req, res, next) => {
+    const { id } = req.params;
+    const game = await Game.findById(id);
+    if (!game.author.equals(req.user._id)) {
+         return res.status(404).send({
+            message:"cannot do that"
+        });
     }
+    next();
+}
+
+module.exports.isReviewAuthor = async (req, res, next) => {
+    const { id, reviewId } = req.params;
+    const review = await Review.findById(reviewId);
+    if (!review.author.equals(req.user._id)) {
+        req.flash('error', 'You do not have permission to do that!');
+        return res.redirect(`/campgrounds/${id}`);
+    }
+    next();
 }
 
 module.exports.validateReview =  (req, res, next) => {

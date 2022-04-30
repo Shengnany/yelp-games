@@ -4,10 +4,14 @@ import { Button, Card, InputGroup, FormControl, Form } from "react-bootstrap";
 import { GameContext } from "../../contexts/ContextProvider";
 import { useNavigate } from "react-router-dom";
 function Login() {
-  const [un, setUn] = useState(null);
-    const [pw, setPw] = useState("");
-        const navigate = useNavigate();
-  const { curUser, setCurser } = useContext(GameContext);
+  const [un, setUn] = useState("");
+  const [pw, setPw] = useState("");
+  const [em, setEm] = useState("");
+
+  const navigate = useNavigate();
+
+  const { curUser, setCurUser } = useContext(GameContext);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -16,15 +20,17 @@ function Login() {
       password: pw,
     };
     try {
-      const response = await GameAPI.post("/users/authenticate", user);
-
-      console.log(response.data.data);
-      if (!curUser) {
-        setCurser(user);
+      console.log("Login: ");
+      const login = await GameAPI.post("/login", user);
+      console.log(login);
+      console.log("setting curuser");
+      if (login.data.message && !curUser.username) {
+        setCurUser(user);
       }
       navigate("/games");
     } catch (err) {
       console.log(err);
+      navigate("/games");
     }
   };
   return (
@@ -34,17 +40,17 @@ function Login() {
         key="Light"
         text={"Light".toLowerCase() === "light" ? "dark" : "white"}
         style={{ width: "30rem", margin: "auto" }}
-        className="mb-2 text-center"
+        className="mt-2 text-center"
       >
         <Card.Body>
           <Card.Title>Sign in</Card.Title>
-          <Card.Text>Please log in with your email</Card.Text>
+          <Card.Text>Please enter your username and password</Card.Text>
           <Form>
-            <Form.Group className="mb-3" controlId="formGroupEmail">
+            <Form.Group className="mb-3" controlId="formGroupText">
               <Form.Label>Username</Form.Label>
               <Form.Control
-                type="email"
-                placeholder="Enter email"
+                type="text"
+                placeholder="Enter username"
                 value={un}
                 onChange={(e) => setUn(e.target.value)}
               />
@@ -59,7 +65,7 @@ function Login() {
               />
             </Form.Group>
 
-            <Button variant="primary" onSubmit={handleSubmit}>
+            <Button variant="primary" onClick={handleSubmit}>
               Log in
             </Button>
           </Form>

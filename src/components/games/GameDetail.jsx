@@ -2,31 +2,37 @@ import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { GameContext } from "../../contexts/ContextProvider";
 import GameAPI from "../../apis/gameAPI";
-import { Button, Card, Row, Col, Form, Tab,ListGroup,Container } from "react-bootstrap";
+import {
+  Button,
+  Card,
+  Row,
+  Col,
+  Form,
+  Tab,
+  ListGroup,
+  Container,
+} from "react-bootstrap";
 import { Rating } from "react-simple-star-rating";
 
 const GameDetail = () => {
-
   const { id } = useParams();
-  const { selectGame, setSelectGame, curUser, setCurUser ,games,setGames} = useContext(
-    GameContext
-  );
+  const { selectGame, setSelectGame, curUser, games, setGames } =
+    useContext(GameContext);
 
   const [curGame, setCurGame] = useState({});
   const navigate = useNavigate();
   const [body, setBody] = useState(selectGame.body);
-  const [rating, setRating] = useState(0); 
-  
+  const [rating, setRating] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await GameAPI.get(`/games/${id}`);
-        const r = response.data.game;
+        const res = response.data.game;
         // console.log("response data"+response.data);
         // const s = games.filter((game) => game._id == id)
-        setCurGame(r);
-        console.log(r.reviews);
+        setCurGame(res);
+        console.log(res.reviews);
       } catch (err) {
         console.log(err);
       }
@@ -37,38 +43,46 @@ const GameDetail = () => {
   const handleDelete = async (e) => {
     e.preventDefault();
     e.stopPropagation();
-    GameAPI.delete(`/games/${id}`, {
+    await GameAPI.delete(`/games/${id}`, {
       data: {
-        curGame
+        curGame,
       },
     });
-    setGames(games.filter(g => g._id != id))
+    setGames(games.filter((g) => g._id != id));
     navigate(`/games`);
-  }
+  };
 
   const handleUpdate = async (e) => {
     setSelectGame(curGame);
-      e.preventDefault();
-      e.stopPropagation();
-      navigate(`/games/${id}/edit`);
-    };
-
-const handleSubmitReview = async (e) => {
     e.preventDefault();
-  e.stopPropagation();
-  
-    GameAPI.post(`/games/${id}/reviews`, {
+    e.stopPropagation();
+    navigate(`/games/${id}/edit`);
+  };
+
+  const handleSubmitReview = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    await GameAPI.post(`/games/${id}/reviews`, {
       data: {
         body,
         rating,
       },
     });
-  navigate('/games')
+    navigate(0);
   };
-  
 
+  const handleDeleteReview = async (r) => {
+    await GameAPI.delete(`/games/${id}/reviews/${r._id}`, {
+      data: {
+        body,
+        rating,
+      },
+    });
+    navigate(0);
+  };
   return (
-    <Container fluid style={{marginLeft:"5rem"}}>
+    <Container fluid style={{ marginLeft: "5rem" }}>
       <Row className="justify-content-md-start">
         <Col xs={12} md={6}>
           <div>
@@ -146,23 +160,29 @@ const handleSubmitReview = async (e) => {
             </Col>
           </Row>
         </Col>
-        <Col
-          xs={12}
-          md={4}
-          className="mt-5"
-        >
+        <Col xs={12} md={4} className="mt-3">
           <ListGroup>
-            {curGame.reviews && curGame.reviews.map((r) => (
-              <ListGroup.Item
-                as="li"
-                className="d-flex justify-content-between align-items-start"
-              >
-                <div className="ms-2 me-auto">
-                  <div className="fw-bold">Rating Score: {r.rating}</div>R
-                  {r.body}
-                </div>
-              </ListGroup.Item>
-            ))}
+            <h3>Review</h3>
+            {curGame.reviews &&
+              curGame.reviews.map((r) => (
+                <ListGroup.Item
+                  as="li"
+                  className="d-flex justify-content-between align-items-start"
+                >
+                  <div className="ms-2 me-auto">
+                    <div className="fw-bold">Rating Score: {r.rating}</div>R
+                    {r.body}
+                  </div>
+                  <Button
+                    type="submit"
+                    variant="danger"
+                    onClick={() => handleDeleteReview(r)}
+                    size="sm"
+                  >
+                    Delete
+                  </Button>{" "}
+                </ListGroup.Item>
+              ))}
           </ListGroup>
         </Col>
       </Row>
@@ -171,4 +191,3 @@ const handleSubmitReview = async (e) => {
 };
 
 export default GameDetail;
-

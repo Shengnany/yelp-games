@@ -1,11 +1,49 @@
 import React, { useState, useContext } from "react";
-import { Outlet, Link, useParams } from "react-router-dom";
+import { Outlet, Link, useParams, useNavigate } from "react-router-dom";
 import { Fragment } from "react";
 import { GameContext } from "../contexts/ContextProvider";
-import { Navbar, Nav, Container , Form, FormControl, Button, NavDropdown} from "react-bootstrap";
+import GameAPI from "../apis/gameAPI";
+import {
+  Navbar,
+  Nav,
+  Container,
+  Form,
+  FormControl,
+  Button,
+  NavDropdown,
+} from "react-bootstrap";
+
 function Header() {
-  const { curUser, setCuruser } = useContext(GameContext);
-  const rightside = !curUser ? (
+  const navigate = useNavigate();
+  const { curUser, setCurUser } = useContext(GameContext);
+
+  console.log("In Header: ");
+
+  console.log(curUser);
+
+  const handleLogout = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const logout = await GameAPI.post("/logout", curUser);
+    console.log(logout.data);
+    setCurUser({});
+    console.log(curUser);
+    navigate("/games");
+  };
+
+  const handleGames = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    navigate("/games");
+  };
+
+  const handleNewGame = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    navigate("/games/new");
+  };
+
+  const rightside = !curUser.username ? (
     <>
       <Nav.Item>
         <Nav.Link href="/login">Log in</Nav.Link>
@@ -15,14 +53,16 @@ function Header() {
       </Nav.Item>
     </>
   ) : (
-    <Nav.Item>
-      <Navbar.Toggle />
-      <Navbar.Collapse className="justify-content-end">
+    <>
+      <Nav.Item>
+        <Nav.Link onClick={handleLogout}>Log out </Nav.Link>
+      </Nav.Item>
+      <Nav.Item>
         <Navbar.Text>
-          Signed in as: <a href="#login">{curUser}</a>
+          Signed in as: <a href="#">{curUser.username}</a>
         </Navbar.Text>
-      </Navbar.Collapse>
-    </Nav.Item>
+      </Nav.Item>
+    </>
   );
 
   return (
@@ -33,16 +73,15 @@ function Header() {
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="me-auto">
             <Nav.Item>
-              <Nav.Link href="/games">Games</Nav.Link>
+              <Nav.Link onClick={handleGames}>Games</Nav.Link>
             </Nav.Item>
             <Nav.Item>
-              <Nav.Link href="/games/new">New Game</Nav.Link>
+              <Nav.Link onClick={handleNewGame}>New Game</Nav.Link>
             </Nav.Item>
           </Nav>
-    <Nav className="justify-content-end" id="responsive-navbar-nav">
-                      {rightside}
-                      </Nav>
-       
+          <Nav className="justify-content-end" id="responsive-navbar-nav">
+            {rightside}
+          </Nav>
         </Navbar.Collapse>
       </Container>
     </Navbar>

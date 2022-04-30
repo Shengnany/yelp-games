@@ -5,23 +5,29 @@ import { Button, Card, InputGroup, FormControl, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
 function Register() {
-      const [un, setUn] = useState(null);
-      const [pw, setPw] = useState("");
-        const navigate = useNavigate();
-  const { curUser, setCurser } = useContext(GameContext);
+  const [un, setUn] = useState("");
+  const [pw, setPw] = useState("");
+  const [em, setEm] = useState("");
 
+  const navigate = useNavigate();
+  const { curUser, setCurUser } = useContext(GameContext);
+  console.log("Resiter: ");
   const handleSubmit = async (e) => {
     e.preventDefault();
     e.stopPropagation();
-    const user = {
-      username: un,
-      password: pw,
-    };
+
     try {
-      const response = await GameAPI.post("/users", user);
-      if (!curUser) {
-        setCurser(user);
-      }
+      const user = {
+        email: em,
+        username: un,
+        password: pw,
+      };
+      console.log("Resiter: ");
+      console.log(user);
+      const response = await GameAPI.post("/register", user);
+      console.log(response.data);
+      setCurUser(user);
+      console.log(user);
       navigate("/games");
     } catch (err) {
       console.log(err);
@@ -35,17 +41,26 @@ function Register() {
         key="Light"
         text={"Light".toLowerCase() === "light" ? "dark" : "white"}
         style={{ width: "30rem", margin: "auto" }}
-        className="mb-2 text-center"
+        className="mt-2 text-center"
       >
         <Card.Body>
           <Card.Title>Register</Card.Title>
-          <Card.Text>Please create an account with your email</Card.Text>
+          <Card.Text>Please create an account</Card.Text>
           <Form>
             <Form.Group className="mb-3" controlId="formGroupEmail">
-              <Form.Label>Username</Form.Label>
+              <Form.Label>Email</Form.Label>
               <Form.Control
                 type="email"
                 placeholder="Enter email"
+                value={em}
+                onChange={(e) => setEm(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="formGroupText">
+              <Form.Label>Username</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter username"
                 value={un}
                 onChange={(e) => setUn(e.target.value)}
               />
@@ -60,7 +75,7 @@ function Register() {
               />
             </Form.Group>
 
-            <Button variant="primary" onSubmit={handleSubmit}>
+            <Button variant="primary" onClick={handleSubmit}>
               Sign up
             </Button>
           </Form>
