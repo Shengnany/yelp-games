@@ -16,6 +16,7 @@ function Login() {
     e.preventDefault();
     e.stopPropagation();
     const user = {
+      email:em,
       username: un,
       password: pw,
     };

@@ -16,7 +16,7 @@ import { Rating } from "react-simple-star-rating";
 
 const GameDetail = () => {
   const { id } = useParams();
-  const { selectGame, setSelectGame, curUser, games, setGames } =
+  const { selectGame, setSelectGame, curUser, games, setGames, } =
     useContext(GameContext);
 
   const [curGame, setCurGame] = useState({});
@@ -69,18 +69,30 @@ const GameDetail = () => {
         rating,
       },
     });
-    navigate(0);
+         navigate(`/games`);
+    console.log("after posting: "+curUser);
   };
 
-  const handleDeleteReview = async (r) => {
+    const handleGames = async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      navigate(`/games`);
+    };
+
+  const handleDeleteReview = async (e, r) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+    console.log(r);
     await GameAPI.delete(`/games/${id}/reviews/${r._id}`, {
       data: {
         body,
         rating,
       },
     });
-    navigate(0);
+       navigate(`/games`);
   };
+
   return (
     <Container fluid style={{ marginLeft: "5rem" }}>
       <Row className="justify-content-md-start">
@@ -118,7 +130,7 @@ const GameDetail = () => {
                 >
                   Delete
                 </Button>{" "}
-                <Button href={`/games`} type="submit" size="sm">
+                <Button onClick={handleGames} type="submit" size="sm">
                   All Games
                 </Button>{" "}
               </Col>
@@ -153,7 +165,7 @@ const GameDetail = () => {
                 variant="dark"
                 className="mt-1"
                 size="sm"
-                onClick={handleSubmitReview}
+                onClick={(e) => handleSubmitReview(e)}
               >
                 Submit
               </Button>
@@ -176,7 +188,7 @@ const GameDetail = () => {
                   <Button
                     type="submit"
                     variant="danger"
-                    onClick={() => handleDeleteReview(r)}
+                    onClick={(e) => handleDeleteReview(e,r)}
                     size="sm"
                   >
                     Delete

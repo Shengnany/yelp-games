@@ -27,7 +27,6 @@ function Header() {
     const logout = await GameAPI.post("/logout", curUser);
     console.log(logout.data);
     setCurUser({});
-    console.log(curUser);
     navigate("/games");
   };
 

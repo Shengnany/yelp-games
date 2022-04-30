@@ -31,7 +31,6 @@ function CreateGame() {
         price,
         description,
       };
-
       if (selectGame.title) {
         const response = await GameAPI.put(`/games/${selectGame._id}`, game);
         const res = response.data;
@@ -43,13 +42,11 @@ function CreateGame() {
         console.log("Submit a new game" + res);
         addGame(res);
         const r = await GameAPI.get("/games");
-
         console.log("fetching data");
         const data = [...games, ...r.data];
         console.log(r);
         setGames(data);
       }
-
       console.log("navigating to..");
       navigate(`/games`);
     } catch (err) {

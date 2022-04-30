@@ -18,7 +18,7 @@ function Register() {
 
     try {
       const user = {
-        email: em,
+        email:em,
         username: un,
         password: pw,
       };
