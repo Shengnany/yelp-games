@@ -1,5 +1,7 @@
 const express = require('express');
-
+if (process.env.NODE_ENV !== "production") {
+    require('dotenv').config();
+}
 const User = require('./model/user.model');
 const path = require('path');
 const mongoose = require('mongoose');
@@ -63,85 +65,20 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(session(sessionConfig));
 app.use(cookieParser());
-app.use(cors({credentials: true, origin: 'http://localhost:3000'}));
-// Passport.js
-// app.use(passport.initialize());
-// app.use(passport.session());
-// app.use(auth_middleware);
+// app.use(cors({credentials: true, origin: 'http://localhost:3000'}));
+const corsUrls = (process.env.CORS_URLS || '*').split(',');
+// corsUrls = ['http://example.com', 'https://example.com'] or ['*']
 
-// initialize Passport
-// app.use(passport.initialize());
-// persistant login sessions
-// app.use(passport.session());
-// use the local strategy instead of github or other
-// for the local strategy the authentication method is going to be located on the User model
-// with the static methods added on
-// passport.use(new LocalStrategy(User.authenticate()));
-// passport.serializeUser(function (user, done) {
-// 	done(null, user.id);
-// });
+app.use(cors({
+  origin: (origin, cb) => cb(null, corsUrls.includes('*') || corsUrls.includes(origin)),
+  credentials: true,
+}));
 
-// passport.deserializeUser(function (id, done) {
-// 	User.findById(id, function (err, user) {
-// 		done(err, user);
-// 	});
-// });
-
-// passport.use(new localStrategy(function (username, password, done) {
-//   User.findOne({ username: username }, function (err, user) {
-//     console.log(password);
-//     if (err)  {
-//       console.log("1: "+password);
-//        return done(err);
-//     }
-// 		if (!user){
-//        console.log("2: "+password);
-//           return done(null, false, { message: 'Incorrect username.' });
-//     }
-
-
-// 		bcrypt.compare(password, user.password, function (err, res) {
-//       if (err) {
-//          console.log("3:");
-//         return done(err);
-//       }
-//       if (res === false) {
-//                   console.log("4:");
-//         return done(null, false, { message: 'Incorrect password.' });
-//       }
-
-// 			console.log("5:");
-// 			return done(null, user);
-// 		});
-// 	});
-// }));
-
-
-// passport.use(User.createStrategy());
-// const crypto = require('crypto');
-// passport.use(new LocalStrategy(function verify(username, password, cb) {
-  
-//   db.get('SELECT * FROM users WHERE username = ?', [ username ], function(err, user) {
-//     if (err) { return cb(err); }
-//     if (!user) { return cb(null, false, { message: 'Incorrect username or password.' }); }
-
-//     crypto.pbkdf2(password, user.salt, 310000, 32, 'sha256', function(err, hashedPassword) {
-//       if (err) { return cb(err); }
-//       if (!crypto.timingSafeEqual(user.hashed_password, hashedPassword)) {
-//         return cb(null, false, { message: 'Incorrect username or password.' });
-//       }
-//       return cb(null, user);
-//     });
-//   });
-// }));
-// how to serialize user : how to store user in the session
-// passport.serializeUser(User.serializeUser());
-// passport.deserializeUser(User.deserializeUser());
 
   app.use(morgan('tiny'));
 
 // app.use(express.static(path.join(__dirname, 'public')))
-// app.use(express.static(path.join(__dirname, 'build')));
+app.use(express.static(path.join(__dirname, 'build')));
 // app.use(mongoSanitize({
 //     replaceWith: '_'
 // }))
