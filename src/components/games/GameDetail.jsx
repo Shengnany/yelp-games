@@ -221,7 +221,7 @@ const GameDetail = () => {
                   className="d-flex justify-content-between align-items-start"
                 >
                   <div className="ms-2 me-auto">
-                    <div className="fw-bold">Rating Score: {r.rating}</div>R
+                    <div className="fw-bold">Rating Score: {r.rating}</div>
                     {r.body}
                   </div>
                   <Button

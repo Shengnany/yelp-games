@@ -65,7 +65,9 @@ function GameList(props) {
     // this.setState({ images: response.data.results });
 
     const f = games
-      .filter((game) => game.title.includes(term))
+      .filter((game) =>
+        game.title.toLowerCase().includes(term.toLocaleLowerCase())
+      )
       .map((g) => (
         <Row className="justify-content-md-center" n>
           <Col xs={12} md={6}>
