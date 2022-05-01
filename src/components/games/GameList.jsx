@@ -5,7 +5,7 @@ import { GameContext } from "../../contexts/ContextProvider";
 import { Button, Card, InputGroup, FormControl, Form } from "react-bootstrap";
 import { useNavigate, useLocation } from "react-router-dom";
 function GameList(props) {
-  const { games, setGames, selectGame, setSelectGame } =
+  const {  games, setGames, selectGame, setSelectGame } =
     useContext(GameContext);
   const navigate = useNavigate();
   const [filter, setFilter] = useState("");
@@ -14,11 +14,9 @@ function GameList(props) {
     const fetchData = async () => {
       try {
         const response = await GameAPI.get("/games");
-
         console.log("fetching data");
-        const data = [...games, ...response.data];
         console.log(response);
-        setGames(data);
+        setGames(response.data);
       } catch (err) {
         console.log(err);
       }

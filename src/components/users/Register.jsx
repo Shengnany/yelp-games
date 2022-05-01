@@ -3,8 +3,11 @@ import { GameContext } from "../../contexts/ContextProvider";
 import GameAPI from "../../apis/gameAPI";
 import { Button, Card, InputGroup, FormControl, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-
+const axios = require('axios')
 function Register() {
+
+  axios.defaults.withCredentials = true;
+
   const [un, setUn] = useState("");
   const [pw, setPw] = useState("");
   const [em, setEm] = useState("");
@@ -24,9 +27,11 @@ function Register() {
       };
       console.log("Resiter: ");
       console.log(user);
-      const response = await GameAPI.post("/register", user);
-      console.log(response.data);
-      setCurUser(user);
+      const response = await axios.post("/register", user);
+      console.log("setting curUser in register");
+      setCurUser(response.data);
+      
+       console.log(curUser);
       console.log(user);
       navigate("/games");
     } catch (err) {

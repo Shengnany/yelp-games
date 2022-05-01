@@ -24,9 +24,8 @@ function Login() {
       console.log("Login: ");
       const login = await GameAPI.post("/login", user);
       console.log(login);
-      console.log("setting curuser");
-      if (login.data.message && !curUser.username) {
-        setCurUser(user);
+      if (login.data && !curUser.username) {
+        setCurUser(login.data);
       }
       navigate("/games");
     } catch (err) {

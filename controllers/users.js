@@ -1,35 +1,37 @@
 const User = require('../model/user.model');
+const bcrypt = require('bcryptjs');
 
-module.exports.register = async (req, res, next) => {
+// module.exports.register = async (req, res, next) => {
    
-    try {
-        const { email, username, password } = req.body;
-        const user = new User({ email, username, password });
-        // automatically added salt and hashed password in the object
-        const registeredUser = await User.register(user, password);
-           console.log("Register user: ")
-         console.dir(registeredUser)
-        req.login(registeredUser, err => {
-            if (err) return next(err);
-            res.status(200).send({
-                messsage: 'register success',
-                user: registeredUser
-            });
-        })
-    //         Users=new User({email: req.body.email, username : req.body.username});
+//     try {        
+//         const { email, username, password } = req.body;
+//            const user = new User({
+//                     email:email,
+//                     username: username,
+//                     password: password
+//            });
+        
+//         const savedUser = await user.save();
+//         req.session.user_id = savedUser._id;
+//          console.log("req.session.user_id")
+
+//           req.session.save();
+//                   console.log(req.session)
+//         next();
+//     //         Users=new User({email: req.body.email, username : req.body.username});
   
-    // User.register(Users, req.body.password, function(err, user) {
-    // if (err) {
-    //     res.json({success:false, message:"Your account could not be saved. Error: ", err}) 
-    // }else{
-    //     res.json({success: true, message: "Your account has been saved"})
-    // }
-    // });
-    } catch (e) {
-         console.dir(e)
-        res.status(404).send('register error');
-    }
-}
+//     // User.register(Users, req.body.password, function(err, user) {
+//     // if (err) {
+//     //     res.json({success:false, message:"Your account could not be saved. Error: ", err}) 
+//     // }else{
+//     //     res.json({success: true, message: "Your account has been saved"})
+//     // }
+//     // });
+//     } catch (e) {
+//          console.dir(e)
+//         res.status(404).send('register error');
+//     }
+// }
 
 // router.post('/login', function(req, res) {
       
@@ -55,8 +57,9 @@ module.exports.login = (req, res) => {
 
 
 module.exports.logout = (req, res) => {
-    req.logout();
-    // req.session.destroy();
+    // req.logout();
+    req.session.destroy();
+    // req.session.user_id = null;
     res.status(200).send({
         messsage: true
     });

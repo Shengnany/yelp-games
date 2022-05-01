@@ -21,18 +21,29 @@ module.exports.isLoggedIn = (req, res, next) => {
     // res.status(404).send({
     //     message: false
     // })
+    console.log(req.session);
+    if (!req.session.user_id) {
+          console.log("no req seesion user id in isLoggedin")
+          return res.status(404).send({
+                 message: false
+        })
+    }
     next();
 }
 
 
 module.exports.isAuthor = async (req, res, next) => {
-    // const { id } = req.params;
-    // const game = await Game.findById(id);
-    // if (!game.author.equals(req.user._id)) {
-    //      return res.status(404).send({
-    //         message:"cannot do that"
-    //     });
-    // }
+    const { id } = req.params;
+    const game = await Game.findById(id);
+    const uid = req.session.user_id;
+    if (!game.author.equals(uid)) {
+        console.log("wrong in isAuthor");
+        console.log(uid)
+          console.log(game.author)
+         return res.status(404).send({
+            message:false
+        });
+    }
     next();
 }
 

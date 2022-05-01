@@ -8,40 +8,62 @@ const { doLogin, checkauth } = require('./middleware');
 
 const bcrypt			= require('bcryptjs');
 
-router.post('/login', passport.authenticate('local', {
+// router.post('/login', passport.authenticate('local', {
 
-}),users.login);
+// }),users.login);
 
+router.post('/login', async (req, res, next) => {
+    const { username, password } = req.body;
+    const foundUser = await User.findAndValidate(username, password);
+    if (foundUser) {
+        req.session.user_id = foundUser._id;
+        res.status(200).send(foundUser)
+        console.log("logged in")
+        next();
+    }
+    else {
+        res.status(404).send({
+                    message:false
+            }) 
+    }
+},users.login)
 
 
 router.post('/register', async (req, res) => {
-    const {username, password,email} = req.body;
-	// const exists = await User.exists({ username: username });
+  try {        
+        const { email, username, password } = req.body;
+           const user = new User({
+                    email:email,
+                    username: username,
+                    password: password
+           });
+        
+          savedUser = await user.save();
+        req.session.user_id = savedUser._id;
+     console.log("req.session.user_id")
 
-	// if (exists) {
-    //     res.status(200).send({
-    //         message:true
-    //     })
-	// };
+          req.session.save();
+      console.log(req.session)
+          console.log("post handler1")
+    // const user = new User({ username, password,email })
+    // await user.save();
+    console.log("post handler2")	
+    
+    return res.status(201).send( savedUser );
+    //         Users=new User({email: req.body.email, username : req.body.username});
+  
+    // User.register(Users, req.body.password, function(err, user) {
+    // if (err) {
+    //     res.json({success:false, message:"Your account could not be saved. Error: ", err}) 
+    // }else{
+    //     res.json({success: true, message: "Your account has been saved"})
+    // }
+    // });
+    } catch (e) {
+         console.dir(e)
+        return res.status(404).send('register error');
+    }
 
-	bcrypt.genSalt(10, function (err, salt) {
-		if (err) return next(err);
-		bcrypt.hash(password, salt, function (err, hash) {
-			if (err) return next(err);
-			
-            const user = new User({
-                email:email,
-                username: username,
-                password: hash
-            });
-
-			user.save();
-            console.log("saved: "+user)
-			 res.status(200).send({
-                     message:true
-                })              
-		});
-	});
 });
 
 router.post('/logout', users.logout)

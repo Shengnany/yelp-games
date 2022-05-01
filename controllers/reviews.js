@@ -10,7 +10,7 @@ module.exports.createReview = async (req, res) => {
     game.reviews.push(review);
     await review.save();
     await game.save();
-    return res.status(200).send(game);
+    return res.status(200).send(review);
 }
 
 module.exports.deleteReview = async (req, res) => {

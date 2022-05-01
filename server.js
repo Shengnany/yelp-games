@@ -20,9 +20,9 @@ const localStrategy		= require('passport-local').Strategy;
 const bcrypt			= require('bcryptjs');
 
 mongoose.connect(mongooseEnpoint, {     
-  // useNewUrlParser: true,
+  useNewUrlParser: true,
   // useCreateIndex: true,
-  // useFindAndModify: false 
+  // useFindAndModify: false, 
   useNewUrlParser: true,
   useUnifiedTopology: true 
 });
@@ -45,8 +45,8 @@ const sessionConfig = {
     store,
     name: 'session',
     secret,
-    resave: false,
-    saveUninitialized: false,
+    resave: true,
+    saveUninitialized: true,
     cookie: {
         // httpOnly: true,
         secure: false,
@@ -57,17 +57,16 @@ const sessionConfig = {
 
 
 const app = express();
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
-app.use(cors({
-    origin: '*',
-}));
 
 app.use(session(sessionConfig));
+app.use(cookieParser());
+app.use(cors({credentials: true, origin: 'http://localhost:3000'}));
 // Passport.js
-app.use(passport.initialize());
-app.use(passport.session());
+// app.use(passport.initialize());
+// app.use(passport.session());
 // app.use(auth_middleware);
 
 // initialize Passport
@@ -78,44 +77,44 @@ app.use(passport.session());
 // for the local strategy the authentication method is going to be located on the User model
 // with the static methods added on
 // passport.use(new LocalStrategy(User.authenticate()));
-passport.serializeUser(function (user, done) {
-	done(null, user.id);
-});
+// passport.serializeUser(function (user, done) {
+// 	done(null, user.id);
+// });
 
-passport.deserializeUser(function (id, done) {
-	User.findById(id, function (err, user) {
-		done(err, user);
-	});
-});
+// passport.deserializeUser(function (id, done) {
+// 	User.findById(id, function (err, user) {
+// 		done(err, user);
+// 	});
+// });
 
-passport.use(new localStrategy(function (username, password, done) {
-  User.findOne({ username: username }, function (err, user) {
-    console.log(password);
-    if (err)  {
-      console.log("1: "+password);
-       return done(err);
-    }
-		if (!user){
-       console.log("2: "+password);
-          return done(null, false, { message: 'Incorrect username.' });
-    }
+// passport.use(new localStrategy(function (username, password, done) {
+//   User.findOne({ username: username }, function (err, user) {
+//     console.log(password);
+//     if (err)  {
+//       console.log("1: "+password);
+//        return done(err);
+//     }
+// 		if (!user){
+//        console.log("2: "+password);
+//           return done(null, false, { message: 'Incorrect username.' });
+//     }
 
 
-		bcrypt.compare(password, user.password, function (err, res) {
-      if (err) {
-         console.log("3:");
-        return done(err);
-      }
-      if (res === false) {
-                  console.log("4:");
-        return done(null, false, { message: 'Incorrect password.' });
-      }
+// 		bcrypt.compare(password, user.password, function (err, res) {
+//       if (err) {
+//          console.log("3:");
+//         return done(err);
+//       }
+//       if (res === false) {
+//                   console.log("4:");
+//         return done(null, false, { message: 'Incorrect password.' });
+//       }
 
-			console.log("5:");
-			return done(null, user);
-		});
-	});
-}));
+// 			console.log("5:");
+// 			return done(null, user);
+// 		});
+// 	});
+// }));
 
 
 // passport.use(User.createStrategy());

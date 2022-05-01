@@ -9,7 +9,8 @@ export const GameContextProvider = (props) => {
   const [curUser, setCurUser] = useState({});
 
   const addGame = (game) => {
-    setGames([game, ...games]);
+    games.push(game);
+    setGames(games);
   };
 
   return (

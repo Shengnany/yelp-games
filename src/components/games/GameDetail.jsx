@@ -16,23 +16,30 @@ import { Rating } from "react-simple-star-rating";
 
 const GameDetail = () => {
   const { id } = useParams();
-  const { selectGame, setSelectGame, curUser, games, setGames, } =
+  const { selectGame, setSelectGame, curUser, games, setGames } =
     useContext(GameContext);
 
-  const [curGame, setCurGame] = useState({});
+  const [curGame, setCurGame] = useState(selectGame);
+  
   const navigate = useNavigate();
   const [body, setBody] = useState(selectGame.body);
   const [rating, setRating] = useState(0);
+  const [reviews, setCurReviews] = useState();
+  
+
+
+
 
   useEffect(() => {
     const fetchData = async () => {
+      
       try {
         const response = await GameAPI.get(`/games/${id}`);
         const res = response.data.game;
-        // console.log("response data"+response.data);
+        console.log("response data" + response.data);
         // const s = games.filter((game) => game._id == id)
         setCurGame(res);
-        console.log(res.reviews);
+        setCurReviews(res.reviews);
       } catch (err) {
         console.log(err);
       }
@@ -40,38 +47,41 @@ const GameDetail = () => {
     fetchData();
   }, []);
 
+    
   const handleDelete = async (e) => {
     e.preventDefault();
     e.stopPropagation();
+    if (!curUser._id ||  curUser._id != curGame.author._id) {
+          alert("You do not have right to that");
+          console.log(curUser._id);
+          console.log(curGame.author._id);
+          return;
+        }
     await GameAPI.delete(`/games/${id}`, {
       data: {
         curGame,
       },
     });
     setGames(games.filter((g) => g._id != id));
+    
     navigate(`/games`);
   };
 
   const handleUpdate = async (e) => {
-    setSelectGame(curGame);
+    
     e.preventDefault();
     e.stopPropagation();
+    if (!curUser._id || curUser._id != curGame.author._id) {
+      alert("You do not have right to that");
+      
+    setSelectGame({});
+           return;
+        }
+    
+    setSelectGame(curGame);
     navigate(`/games/${id}/edit`);
   };
 
-  const handleSubmitReview = async (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    await GameAPI.post(`/games/${id}/reviews`, {
-      data: {
-        body,
-        rating,
-      },
-    });
-         navigate(`/games`);
-    console.log("after posting: "+curUser);
-  };
 
     const handleGames = async (e) => {
       e.preventDefault();
@@ -79,20 +89,61 @@ const GameDetail = () => {
       navigate(`/games`);
     };
 
-  const handleDeleteReview = async (e, r) => {
+    const handleSubmitReview = async (e) => {
       e.preventDefault();
       e.stopPropagation();
 
-    console.log(r);
-    await GameAPI.delete(`/games/${id}/reviews/${r._id}`, {
-      data: {
-        body,
-        rating,
-      },
-    });
-       navigate(`/games`);
-  };
 
+      const r  = await GameAPI.post(`/games/${id}/reviews`, {
+          data: {
+            body,
+            rating,
+          },
+      });
+      
+      console.log("in submit review： ");
+      console.log(r.data);
+      reviews.push(r.data);
+
+      setCurReviews(reviews);
+      navigate(`/games/${id}`);
+      setBody(' ');
+      setRating(0);
+      console.log("after posting: " + curUser);
+    };
+
+  
+  const handleDeleteReview = async (e, r) => {
+
+    console.log("delete review: ");
+        console.dir(r);
+      e.preventDefault();
+    e.stopPropagation();
+   
+      await GameAPI.delete(`/games/${id}/reviews/${r._id}`, {
+        data: {
+          body,
+          rating,
+        },
+      });
+      setCurReviews(reviews.filter((re) => re._id != r._id));
+       console.log(reviews);
+      navigate(`/games/${id}`);
+  };
+const show =  !curUser._id || curUser._id != curGame.author._id? (<div></div>): (<div>
+                        <Button onClick={handleUpdate} variant="info" size="sm">
+                  Update
+                </Button>{" "}
+                <Button
+                  type="submit"
+                  variant="danger"
+                  onClick={handleDelete}
+                  size="sm"
+                >
+                  Delete
+                </Button>{" "}
+                  </div>  )
+              
   return (
     <Container fluid style={{ marginLeft: "5rem" }}>
       <Row className="justify-content-md-start">
@@ -106,11 +157,14 @@ const GameDetail = () => {
                   key="light"
                   text="dark"
                 >
-                  <Card.Header> Game: {curGame.title}</Card.Header>
+                  <Card.Header>
+                    Author of the post:{" "}
+                    {curGame.author? curGame.author.username : " "}
+                  </Card.Header>
                   {/* <Card.Img variant="top" src="holder.js/100px180" /> */}
                   <Card.Body>
-                    <Card.Title>Price </Card.Title>
-                    <Card.Text>{curGame.price}</Card.Text>
+                    <Card.Title> Game: {curGame.title} </Card.Title>
+                    <Card.Text>Price: {curGame.price}</Card.Text>
                     <Card.Title>Descipton </Card.Title>
                     <Card.Text>{curGame.description}</Card.Text>
                   </Card.Body>
@@ -119,17 +173,7 @@ const GameDetail = () => {
             </Row>
             <Row className="justify-content-md-star mt-3">
               <Col>
-                <Button onClick={handleUpdate} variant="info" size="sm">
-                  Update
-                </Button>{" "}
-                <Button
-                  type="submit"
-                  variant="danger"
-                  onClick={handleDelete}
-                  size="sm"
-                >
-                  Delete
-                </Button>{" "}
+                {show}
                 <Button onClick={handleGames} type="submit" size="sm">
                   All Games
                 </Button>{" "}
@@ -175,8 +219,8 @@ const GameDetail = () => {
         <Col xs={12} md={4} className="mt-3">
           <ListGroup>
             <h3>Review</h3>
-            {curGame.reviews &&
-              curGame.reviews.map((r) => (
+            {reviews &&
+              reviews.map((r) => (
                 <ListGroup.Item
                   as="li"
                   className="d-flex justify-content-between align-items-start"
@@ -188,7 +232,7 @@ const GameDetail = () => {
                   <Button
                     type="submit"
                     variant="danger"
-                    onClick={(e) => handleDeleteReview(e,r)}
+                    onClick={(e) => handleDeleteReview(e, r)}
                     size="sm"
                   >
                     Delete

@@ -22,6 +22,8 @@ function CreateGame() {
   const [description, setDescription] = useState(selectGame.description);
   console.log("cur user: ");
   console.log(curUser);
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -38,14 +40,9 @@ function CreateGame() {
         setSelectGame({});
       } else {
         const response = await GameAPI.post(`/games`, game);
-        const res = response.data.game;
+        const res = response.data;
         console.log("Submit a new game" + res);
         addGame(res);
-        const r = await GameAPI.get("/games");
-        console.log("fetching data");
-        const data = [...games, ...r.data];
-        console.log(r);
-        setGames(data);
       }
       console.log("navigating to..");
       navigate(`/games`);
@@ -59,7 +56,6 @@ function CreateGame() {
     <Form
       style={{ width: "40rem", margin: "0 auto" }}
       className="mt-4"
-      onSubmit={handleSubmit}
     >
       <InputGroup className="mb-3">
         <InputGroup.Text id="basic-addon1">
