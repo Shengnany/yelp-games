@@ -20,7 +20,7 @@ function CreateGame() {
   const [title, setTitle] = useState(selectGame.title);
   const [price, setPrice] = useState(selectGame.price);
   const [description, setDescription] = useState(selectGame.description);
-  console.log("cur user: ");
+  console.log("cur user in create game: ");
   console.log(curUser);
 
 

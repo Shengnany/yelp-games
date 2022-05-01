@@ -37,9 +37,16 @@ function Header() {
   };
 
   const handleNewGame = async (e) => {
+      console.log("new game curuser");
     e.preventDefault();
     e.stopPropagation();
-    navigate("/games/new");
+      
+    if (!curUser || Object.keys(curUser).length==0) {
+      console.log(curUser);
+      navigate("/login");
+      return;
+    }
+    else navigate("/games/new");
   };
 
   const rightside = !curUser.username ? (
