@@ -29,6 +29,9 @@ const GameDetail = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        console.log(curUser);
+        console.log("curUser");
+        console.log(curGame);
         const response = await GameAPI.get(`/games/${id}`);
         const res = response.data.game;
         console.log("response data");
@@ -123,7 +126,7 @@ const GameDetail = () => {
   };
 
   const show =
-    !curUser || !curUser._id || curUser.username != curGame.author.username ? (
+    !curUser || !curUser._id || !curGame|| !curGame.author || curUser._id != curGame.author._id ? (
       <div></div>
     ) : (
       <div>

@@ -18,7 +18,7 @@ const secret = process.env.SECRET || 'thisshouldbeabettersecret!';
 
 const localStrategy		= require('passport-local').Strategy;
 const bcrypt			= require('bcryptjs');
-
+console.log(process.env);
 mongoose.connect(mongooseEnpoint, {     
   useNewUrlParser: true,
   // useCreateIndex: true,
