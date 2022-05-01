@@ -20,23 +20,20 @@ const GameDetail = () => {
     useContext(GameContext);
 
   const [curGame, setCurGame] = useState(selectGame);
-  
+
   const navigate = useNavigate();
   const [body, setBody] = useState(selectGame.body);
   const [rating, setRating] = useState(0);
   const [reviews, setCurReviews] = useState();
-  
-
-
-
 
   useEffect(() => {
     const fetchData = async () => {
-      
       try {
         const response = await GameAPI.get(`/games/${id}`);
         const res = response.data.game;
-        console.log("response data" + response.data);
+        console.log("response data");
+        console.log(response.data);
+         console.log(curUser);
         // const s = games.filter((game) => game._id == id)
         setCurGame(res);
         setCurReviews(res.reviews);
@@ -47,103 +44,98 @@ const GameDetail = () => {
     fetchData();
   }, []);
 
-    
   const handleDelete = async (e) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!curUser._id ||  curUser._id != curGame.author._id) {
-          alert("You do not have right to that");
-          console.log(curUser._id);
-          console.log(curGame.author._id);
-          return;
-        }
+    if (!curUser._id || curUser._id != curGame.author._id) {
+      alert("You do not have right to that");
+      console.log(curUser._id);
+      console.log(curGame.author._id);
+      return;
+    }
     await GameAPI.delete(`/games/${id}`, {
       data: {
         curGame,
       },
     });
     setGames(games.filter((g) => g._id != id));
-    
+
     navigate(`/games`);
   };
 
   const handleUpdate = async (e) => {
-    
     e.preventDefault();
     e.stopPropagation();
     if (!curUser._id || curUser._id != curGame.author._id) {
       alert("You do not have right to that");
-      
-    setSelectGame({});
-           return;
-        }
-    
+
+      setSelectGame({});
+      return;
+    }
+
     setSelectGame(curGame);
     navigate(`/games/${id}/edit`);
   };
 
-
-    const handleGames = async (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      navigate(`/games`);
-    };
-
-    const handleSubmitReview = async (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-
-
-      const r  = await GameAPI.post(`/games/${id}/reviews`, {
-          data: {
-            body,
-            rating,
-          },
-      });
-      
-      console.log("in submit review： ");
-      console.log(r.data);
-      reviews.push(r.data);
-
-      setCurReviews(reviews);
-      navigate(`/games/${id}`);
-      setBody(' ');
-      setRating(0);
-      console.log("after posting: " + curUser);
-    };
-
-  
-  const handleDeleteReview = async (e, r) => {
-
-    console.log("delete review: ");
-        console.dir(r);
-      e.preventDefault();
+  const handleGames = async (e) => {
+    e.preventDefault();
     e.stopPropagation();
-   
-      await GameAPI.delete(`/games/${id}/reviews/${r._id}`, {
-        data: {
-          body,
-          rating,
-        },
-      });
-      setCurReviews(reviews.filter((re) => re._id != r._id));
-       console.log(reviews);
-      navigate(`/games/${id}`);
+    navigate(`/games`);
   };
-const show =   !curUser || !curUser._id || curUser._id != curGame.author._id? (<div></div>): (<div>
-                        <Button onClick={handleUpdate} variant="info" size="sm">
-                  Update
-                </Button>{" "}
-                <Button
-                  type="submit"
-                  variant="danger"
-                  onClick={handleDelete}
-                  size="sm"
-                >
-                  Delete
-                </Button>{" "}
-                  </div>  )
-              
+
+  const handleSubmitReview = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const r = await GameAPI.post(`/games/${id}/reviews`, {
+      data: {
+        body,
+        rating,
+      },
+    });
+
+    console.log("in submit review： ");
+    console.log(r.data);
+    reviews.push(r.data);
+
+    setCurReviews(reviews);
+    navigate(`/games/${id}`);
+    setBody(" ");
+    setRating(0);
+    console.log("after posting: " + curUser);
+  };
+
+  const handleDeleteReview = async (e, r) => {
+    console.log("delete review: ");
+    console.dir(r);
+    e.preventDefault();
+    e.stopPropagation();
+
+    await GameAPI.delete(`/games/${id}/reviews/${r._id}`, {
+      data: {
+        body,
+        rating,
+      },
+    });
+    setCurReviews(reviews.filter((re) => re._id != r._id));
+    console.log(reviews);
+    navigate(`/games/${id}`);
+  };
+
+  const show =
+    !curUser || !curUser._id || curUser._id != curGame.author? (
+      <div></div>
+    ) : (
+      <div>
+        <Button onClick={handleUpdate} variant="info" size="sm">
+          Update
+        </Button>{" "}
+        <Button type="submit" variant="danger" onClick={handleDelete} size="sm">
+          Delete
+        </Button>{" "}
+      </div>
+    );
+
   return (
     <Container fluid style={{ marginLeft: "5rem" }}>
       <Row className="justify-content-md-start">
@@ -159,7 +151,7 @@ const show =   !curUser || !curUser._id || curUser._id != curGame.author._id? (<
                 >
                   <Card.Header>
                     Author of the post:{" "}
-                    {curGame.author? curGame.author.username : " "}
+                    {curGame.author ? curGame.author.username : " "}
                   </Card.Header>
                   {/* <Card.Img variant="top" src="holder.js/100px180" /> */}
                   <Card.Body>
