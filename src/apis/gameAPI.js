@@ -2,7 +2,7 @@ import axios from "axios";
 
 
  const gameAPI = axios.create({
-   baseURL: "http://localhost:8000/",
+   baseURL: "https://blooming-garden-12683.herokuapp.com/",
     withCredentials: true,
 });
 
