@@ -130,7 +130,7 @@ const GameDetail = () => {
        console.log(reviews);
       navigate(`/games/${id}`);
   };
-const show =  !curUser._id || curUser._id != curGame.author._id? (<div></div>): (<div>
+const show =   !curUser || !curUser._id || curUser._id != curGame.author._id? (<div></div>): (<div>
                         <Button onClick={handleUpdate} variant="info" size="sm">
                   Update
                 </Button>{" "}

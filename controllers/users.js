@@ -51,7 +51,7 @@ module.exports.login = (req, res) => {
     // delete req.session.returnTo;
     console.log("login in request body: ")
     
-    console.log(req.user);
+    console.log(req.session.user_id);
     res.status(200).send({ message: true });
 }
 

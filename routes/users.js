@@ -13,16 +13,21 @@ const bcrypt			= require('bcryptjs');
 // }),users.login);
 
 router.post('/login', async (req, res, next) => {
+    console.log(req.body)
     const { username, password } = req.body;
-    const foundUser = await User.findAndValidate(username, password);
-    if (foundUser) {
+    // const foundUser = await User.findAndValidate(username, password);
+    	const foundUser = await User.findOne({ username });
+		console.log(password)
+	console.log(foundUser.password)
+    const isValid =  bcrypt.compareSync(password, foundUser.password);
+    if (isValid) {
         req.session.user_id = foundUser._id;
-        res.status(200).send(foundUser)
+        return res.status(200).send(foundUser)
         console.log("logged in")
         next();
     }
     else {
-        res.status(404).send({
+        return res.status(401).send({
                     message:false
             }) 
     }
@@ -31,18 +36,24 @@ router.post('/login', async (req, res, next) => {
 
 router.post('/register', async (req, res) => {
   try {        
-        const { email, username, password } = req.body;
-           const user = new User({
+      const { email, username, password } = req.body;
+
+      bcrypt.hash(password, 2)
+		.then(async function (hash) {
+    		// Store hash in your password DB.
+			const user = new User({
                     email:email,
                     username: username,
-                    password: password
-           });
-        
-          savedUser = await user.save();
-        req.session.user_id = savedUser._id;
-     console.log("req.session.user_id")
+                    password: hash
+            });
+            
 
-          req.session.save();
+            savedUser = await user.save();
+                   
+      req.session.user_id = savedUser._id;
+      console.log("savedUser.password")
+        console.log(savedUser.password)
+                req.session.save();
       console.log(req.session)
           console.log("post handler1")
     // const user = new User({ username, password,email })
@@ -50,6 +61,12 @@ router.post('/register', async (req, res) => {
     console.log("post handler2")	
     
     return res.status(201).send( savedUser );
+		})
+		.catch((e) => console.dir(e));
+          
+ 
+
+
     //         Users=new User({email: req.body.email, username : req.body.username});
   
     // User.register(Users, req.body.password, function(err, user) {

@@ -77,8 +77,11 @@ const userSchema = new mongoose.Schema({
 })
 
 userSchema.statics.findAndValidate = async function (username, password) {
-    const foundUser = await this.findOne({ username });
-    const isValid = await bcrypt.compare(password, foundUser.password);
+
+	const foundUser = await this.findOne({ username });
+		console.log(password)
+	console.log(foundUser.password)
+    const isValid =  bcrypt.compareSync(password, foundUser.password);
     return isValid ? foundUser : false;
 }
 
@@ -89,6 +92,7 @@ userSchema.pre('save',  async function (next) {
 		.then(function (hash) {
     		// Store hash in your password DB.
 			this.password = hash;
+			console.log(this.password)
 		})
 		.catch((e) => console.dir(e));
     next();
