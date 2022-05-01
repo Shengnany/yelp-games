@@ -123,7 +123,7 @@ const GameDetail = () => {
   };
 
   const show =
-    !curUser || !curUser._id || curUser._id != curGame.author? (
+    !curUser || !curUser._id || curUser.username != curGame.author.username ? (
       <div></div>
     ) : (
       <div>
